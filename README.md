@@ -137,10 +137,10 @@ Input:
 # Gra-w-Memory (Polski)
 
 ## Spis treści
-1. [Opis projektu](#opis-projektu)
-2. [Konfiguracja i kompilacja](#konfiguracja-i-kompilacja)
-3. [Instrukcje do gry](#instrukcje-do-gry)
-4. [Kluczowe funkcje](#kluczowe-funkcje)
+1. [Opis projektu](#opis-projektu).
+2. [Konfiguracja i kompilacja](#konfiguracja-i-kompilacja).
+3. [Instrukcje do gry](#instrukcje-do-gry).
+4. [Kluczowe funkcje](#kluczowe-funkcje).
 
 ---
 
