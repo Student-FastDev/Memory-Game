@@ -10,19 +10,17 @@
 
 using namespace std;
 
-bool rewardsEnabled = true; // Zmienna globalna określająca, czy włączone są nagrody.
-bool animationsEnabled = true; // Zmienna globalna określająca, czy włączone są animacje.
+bool rewardsEnabled = true; 
+bool animationsEnabled = true; 
 
-// Funkcja czyszcząca ekran.
 void clearScreen() {
-#ifdef _WIN32
-    system("cls"); // Dla systemu Windows.
-#else
-    system("clear"); // Dla systemu Unix/Linux.
-#endif
+    #ifdef _WIN32
+        system("cls"); 
+    #else
+        system("clear"); 
+    #endif
 }
 
-// Animacja trofeum.
 void displayTrophyAnimation(string player) {
     string trophy1 = R"(
              ___________
@@ -36,7 +34,6 @@ void displayTrophyAnimation(string player) {
                _.' '._      
               """"""""      
     )";
-
     
     string trophy2 = R"(
              ___________
@@ -51,7 +48,7 @@ void displayTrophyAnimation(string player) {
               """"""""      
     )";
 
-    for (int i = 0; i < 6; ++i) {  // Loop to alternate the frames
+    for (int i = 0; i < 6; ++i) {  
         clearScreen();
         if (i % 2 == 0) {
             cout << "          " << player << " have won!" << endl;
@@ -64,9 +61,7 @@ void displayTrophyAnimation(string player) {
     }
 }
 
-// Animacja przegrania.
 void displayLoseAnimation() {
-    
     string loseFace = R"(
      .-""""""-.
    .'          '.
@@ -81,77 +76,69 @@ void displayLoseAnimation() {
     
     clearScreen();
     cout << "    You've lost!" << endl;
-    
     cout << loseFace << endl;
 }
 
-// Funkcja wyświetlająca planszę gry wraz z odkrytymi kartami.
 void displayBoard(const vector<vector<char>>& board, const vector<vector<bool>>& revealed, int animRow = -1, int animCol = -1, char animChar = '\0') {
-    clearScreen(); // Czyści ekran.
+    clearScreen(); 
     cout << "    ";
     for (int i = 0; i < board[0].size(); ++i)
-        cout << setw(2) << i + 1 << " "; // Wyświetla numery kolumn.
+        cout << setw(2) << i + 1 << " "; 
     cout << endl;
 
     for (int i = 0; i < board.size(); ++i) {
-        cout << setw(2) << i + 1 << " "; // Wyświetla numery wierszy.
+        cout << setw(2) << i + 1 << " "; 
         for (int j = 0; j < board[i].size(); ++j) {
             if (i == animRow && j == animCol) {
-                cout << setw(2) << animChar << " "; // Wyświetla animację dla danego pola.
+                cout << setw(2) << animChar << " "; 
             } else if (revealed[i][j]) {
-                cout << setw(2) << board[i][j] << " "; // Wyświetla odkryte karty.
+                cout << setw(2) << board[i][j] << " "; 
             } else {
-                cout << setw(2) << "#" << " "; // Ukryte karty.
+                cout << setw(2) << "#" << " "; 
             }
         }
         cout << endl;
     }
 }
 
-// Funkcja wyświetlająca animację odkrywania karty.
 void smoothRevealAnimation(int row, int col, const vector<vector<char>>& board, vector<vector<bool>>& revealed) {
-    char steps[] = {'#', '-', '/', '|', '\\', '?', board[row][col]}; // Kroki animacji odkrywania karty.
+    char steps[] = {'#', '-', '/', '|', '\\', '?', board[row][col]}; 
     int totalSteps = sizeof(steps) / sizeof(steps[0]);
 
     for (int i = 0; i < totalSteps; ++i) {
-        revealed[row][col] = true; // Odkrywa kartę.
-        int delay = 50 + (i * 100 / totalSteps); // Ustala opóźnienie animacji.
-        displayBoard(board, revealed, row, col, steps[i]); // Wyświetla planszę z animacją.
-        this_thread::sleep_for(chrono::milliseconds(delay)); // Czeka przez ustalony czas.
+        revealed[row][col] = true; 
+        int delay = 50 + (i * 100 / totalSteps); 
+        displayBoard(board, revealed, row, col, steps[i]); 
+        this_thread::sleep_for(chrono::milliseconds(delay)); 
     }
 }
 
-// Funkcja odkrywająca kartę bez animacji.
+
 void revealCard(int row, int col, vector<vector<bool>>& revealed) {
-    revealed[row][col] = true; // Odkrywa kartę.
+    revealed[row][col] = true; 
 }
 
-// Funkcja inicjalizująca planszę gry z kartami.
 void initializeBoard(vector<vector<char>>& board) {
     vector<char> symbols;
     int totalCards = board.size() * board[0].size();
     
-    // Użycie wielkich liter, małych liter oraz cyfr, aby mieć wystarczającą ilość symboli.
+    
     for (char c = 'A'; c <= 'Z'; ++c) symbols.push_back(c);
     for (char c = 'a'; c <= 'z'; ++c) symbols.push_back(c);
     for (char c = '0'; c <= '9'; ++c) symbols.push_back(c);
 
-    // Sprawdzenie, czy jest wystarczająca ilość symboli na planszę.
     if (totalCards / 2 > symbols.size()) {
         cerr << "Board is too big to generate unique symbols." << endl;
-        exit(1); // Wyjście, jeśli plansza jest zbyt duża na dostępne symbole.
+        exit(1); 
     }
 
-    // Duplikowanie symboli, aby stworzyć pary.
     symbols.resize(totalCards / 2);
     symbols.insert(symbols.end(), symbols.begin(), symbols.end());
-
-    // Tasowanie symboli.
+    
     random_device rd;
     mt19937 g(rd());
     shuffle(symbols.begin(), symbols.end(), g);
 
-    // Przypisanie symboli do planszy.
     int k = 0;
     for (int i = 0; i < board.size(); ++i) {
         for (int j = 0; j < board[i].size(); ++j) {
@@ -160,121 +147,116 @@ void initializeBoard(vector<vector<char>>& board) {
     }
 }
 
-
-// Funkcja wyświetlająca planszę po odkryciu karty.
 void revealCard(int row, int col, const vector<vector<char>>& board, vector<vector<bool>>& revealed) {
-    revealed[row][col] = true; // Odkrywa kartę.
-    displayBoard(board, revealed); // Wyświetla planszę.
+    revealed[row][col] = true; 
+    displayBoard(board, revealed); 
 }
 
-// Funkcja wyświetlająca menu ustawień gry.
+
 void displaySettingsMenu() {
     clearScreen();
     cout << "+-------------------------+\n";
-    cout << "| Animations  |  " << (animationsEnabled ? "Enabled " : "Disabled") << " |\n"; // Wyświetla stan animacji.
+    cout << "| Animations  |  " << (animationsEnabled ? "Enabled " : "Disabled") << " |\n"; 
     cout << "+-------------------------+\n";
-    cout << "| Rewards*    |  " << (rewardsEnabled ? "Enabled " : "Disabled") << " |\n"; // Wyświetla stan nagród.
+    cout << "| Rewards*    |  " << (rewardsEnabled ? "Enabled " : "Disabled") << " |\n"; 
     cout << "+-------------------------+\n";
-    cout << "* - the person who got a match will get an extra round;\n\n"; // Informacja o dodatkowej rundzie.
+    cout << "* - the person who got a match will get an extra round;\n\n"; 
 }
 
-// Funkcja wyświetlająca główne menu gry.
+
 void displayMainMenu() {
     clearScreen();
     cout << " _  _  ____  _  _ \n";
     cout << "( \\/ )(  __)( \\/ )\n";
     cout << "/ \\/ \\ ) _) / \\/ \\\n";
     cout << "\\_)(_/(____)\\_)(_/ \n";
-    cout << "\nWelcome to Memory Game!\n\n"; // Wyświetla tytuł gry.
+    cout << "\nWelcome to Memory Game!\n\n"; 
     cout << "(1) 2-Players Mode\n";
     cout << "(2) Vs. Computer Mode\n";
-    cout << "(3) Settings\n"; // Opcje menu.
+    cout << "(3) Settings\n"; 
     cout << "(4) Exit\n";
     cout << "\nInput: ";
 }
 
-// Funkcja wybierająca karty przez komputer.
+
 pair<int, int> computerPickCard(const vector<vector<bool>>& revealed, int rows, int cols) {
     int r, c;
     do {
         r = rand() % rows;
         c = rand() % cols;
-    } while (revealed[r][c]); // Losuje karty, które nie są jeszcze odkryte.
-    return {r, c}; // Zwraca pozycję karty.
+    } while (revealed[r][c]); 
+    return {r, c}; 
 }
 
 void playGame(int rows, int cols, bool isVsComputer = false) {
-    vector<vector<char>> board(rows, vector<char>(cols)); // Tworzy planszę.
-    vector<vector<bool>> revealed(rows, vector<bool>(cols, false)); // Tworzy tablicę odkrytych kart.
+    vector<vector<char>> board(rows, vector<char>(cols)); 
+    vector<vector<bool>> revealed(rows, vector<bool>(cols, false)); 
 
-    initializeBoard(board); // Inicjalizuje planszę z kartami.
+    initializeBoard(board); 
 
-    int currentPlayer = 1; // Ustawia aktualnego gracza.
-    int pairsFound = 0; // Liczba odkrytych par.
-    int totalPairs = (rows * cols) / 2; // Całkowita liczba par do odkrycia.
+    int currentPlayer = 1; 
+    int pairsFound = 0; 
+    int totalPairs = (rows * cols) / 2; 
 
-    int player1Pairs = 0, player2Pairs = 0, computerPairs = 0; // Liczba par odkrytych przez każdego gracza.
-    bool roundWon = false; // Czy gracz wygrał rundę.
+    int player1Pairs = 0, player2Pairs = 0, computerPairs = 0; 
+    bool roundWon = false; 
 
-    while (pairsFound < totalPairs) { // Główna pętla gry.
-        displayBoard(board, revealed); // Wyświetla planszę.
+    while (pairsFound < totalPairs) { 
+        displayBoard(board, revealed); 
+        int row1, col1, row2, col2; 
         
-        int row1, col1, row2, col2; // Wybór dwóch kart.
-
-        // Wybór pierwszej karty
         if (isVsComputer && currentPlayer == 2) {
             do {
-                tie(row1, col1) = computerPickCard(revealed, rows, cols); // Komputer wybiera kartę.
-            } while (revealed[row1][col1]); // Sprawdzanie, czy karta nie została już odkryta.
+                tie(row1, col1) = computerPickCard(revealed, rows, cols); 
+            } while (revealed[row1][col1]); 
         } else {
             do {
                 cout << "Player " << currentPlayer << ", pick the first card (row and column): ";
                 cin >> row1 >> col1;
-                --row1; --col1; // Dopasowanie do indeksów tablicy.
-            } while (row1 < 0 || row1 >= rows || col1 < 0 || col1 >= cols || revealed[row1][col1]); // Sprawdzanie poprawności wyboru.
+                --row1; --col1; 
+            } while (row1 < 0 || row1 >= rows || col1 < 0 || col1 >= cols || revealed[row1][col1]); 
         }
 
-        if (animationsEnabled) smoothRevealAnimation(row1, col1, board, revealed); // Animacja odkrywania karty.
-        else revealCard(row1, col1, board, revealed); // Odkrywa kartę bez animacji.
+        if (animationsEnabled) smoothRevealAnimation(row1, col1, board, revealed); 
+        else revealCard(row1, col1, board, revealed); 
 
-        // Wybór drugiej karty
+        
         if (isVsComputer && currentPlayer == 2) {
             do {
-                tie(row2, col2) = computerPickCard(revealed, rows, cols); // Komputer wybiera kartę.
-            } while ((row1 == row2 && col1 == col2) || revealed[row2][col2]); // Sprawdzanie, czy karta nie została już odkryta.
+                tie(row2, col2) = computerPickCard(revealed, rows, cols); 
+            } while ((row1 == row2 && col1 == col2) || revealed[row2][col2]); 
         } else {
             do {
                 cout << "Player " << currentPlayer << ", pick the second card (row and column): ";
                 cin >> row2 >> col2;
-                --row2; --col2; // Dopasowanie do indeksów tablicy.
-            } while ((row1 == row2 && col1 == col2) || row2 < 0 || row2 >= rows || col2 < 0 || col2 >= cols || revealed[row2][col2]); // Sprawdzanie poprawności wyboru.
+                --row2; --col2; 
+            } while ((row1 == row2 && col1 == col2) || row2 < 0 || row2 >= rows || col2 < 0 || col2 >= cols || revealed[row2][col2]); 
         }
 
-        if (animationsEnabled) smoothRevealAnimation(row2, col2, board, revealed); // Animacja odkrywania karty.
-        else revealCard(row2, col2, board, revealed); // Odkrywa kartę bez animacji.
+        if (animationsEnabled) smoothRevealAnimation(row2, col2, board, revealed); 
+        else revealCard(row2, col2, board, revealed); 
 
-        // Sprawdza, czy gracz odkrył parę.
+        
         if (board[row1][col1] == board[row2][col2]) {
             cout << "It's a match!\n";
-            pairsFound++; // Zwiększa liczbę odkrytych par.
-            roundWon = true; // Gracz wygrał rundę.
-            if (currentPlayer == 1) player1Pairs++; // Aktualizacja wyniku gracza 1.
-            else if (isVsComputer) computerPairs++; // Aktualizacja wyniku komputera.
-            else player2Pairs++; // Aktualizacja wyniku gracza 2.
+            pairsFound++; 
+            roundWon = true; 
+            if (currentPlayer == 1) player1Pairs++; 
+            else if (isVsComputer) computerPairs++; 
+            else player2Pairs++; 
         } else {
             cout << "Not a match.\n";
-            this_thread::sleep_for(chrono::milliseconds(1000)); // Opóźnienie, aby gracze mogli zobaczyć wynik.
-            revealed[row1][col1] = revealed[row2][col2] = false; // Ukrywa karty, jeśli nie są parą.
-            roundWon = false; // Gracz nie wygrał rundy.
+            this_thread::sleep_for(chrono::milliseconds(1000)); 
+            revealed[row1][col1] = revealed[row2][col2] = false; 
+            roundWon = false; 
         }
 
-        // Zmiana gracza, jeśli runda nie została wygrana lub jeśli nagrody są wyłączone.
+        
         if (!(roundWon && rewardsEnabled)) {
-            currentPlayer = (currentPlayer == 1) ? 2 : 1; // Zmienia aktualnego gracza.
+            currentPlayer = (currentPlayer == 1) ? 2 : 1; 
         }
     }
-
-    // Wyświetlanie wyników gry po zakończeniu.
+    
     cout << "\nGame Over! Final Results:\n";
     cout << "Player 1 Pairs: " << player1Pairs << endl;
     
@@ -284,22 +266,17 @@ void playGame(int rows, int cols, bool isVsComputer = false) {
         cout << "Player 2 Pairs: " << player2Pairs << endl;
     }
 
-    // Wyświetlanie zwycięzcy.
     if (player1Pairs > (isVsComputer ? computerPairs : player2Pairs)) {
         displayTrophyAnimation("Player 1");
     } else if (isVsComputer && computerPairs > player1Pairs) {
-        displayLoseAnimation(); // Komputer wygrywa, wyświetla animację przegranej.
+        displayLoseAnimation(); 
     } else if (!isVsComputer && player2Pairs > player1Pairs) {
         displayTrophyAnimation("Player 2");
     } else {
-        cout << "It's a tie!" << endl; // Remis.
+        cout << "It's a tie!" << endl; 
     }
 }
 
-
-
-
-// Funkcja obsługująca główne menu.
 void mainMenu() {
     while (true) {
         displayMainMenu();
@@ -315,8 +292,8 @@ void mainMenu() {
                 cin >> rows;
                 cout << "Enter number of columns: ";
                 cin >> cols;
-                playGame(rows, cols); // Uruchamia tryb gry dla dwóch graczy.
-                break; // Dodano break.
+                playGame(rows, cols); 
+                break; 
             }
             case 2: {
                 clearScreen();
@@ -326,8 +303,8 @@ void mainMenu() {
                 cin >> rows;
                 cout << "Enter number of columns: ";
                 cin >> cols;
-                playGame(rows, cols, true); // Uruchamia tryb gry przeciwko komputerowi.
-                break; // Dodano break.
+                playGame(rows, cols, true); 
+                break; 
             }
             case 3: {
                 displaySettingsMenu();
@@ -338,19 +315,18 @@ void mainMenu() {
                 break;
             }
             case 4: {
-                return; // Kończy pętlę i opuszcza funkcję.
+                return; 
             }
             default: {
-                cout << "Invalid choice." << endl; // Komunikat o błędnym wyborze.
-                break; // Dodano break.
+                cout << "Invalid choice." << endl; 
+                break; 
             }
         }
     }
 }
 
-// Funkcja główna programu.
 int main() {
-    srand(static_cast<unsigned int>(time(0))); // Inicjalizuje generator losowy.
-    mainMenu(); // Uruchamia główne menu gry.
-    return 0; // Zakończenie programu.
+    srand(static_cast<unsigned int>(time(0))); 
+    mainMenu(); 
+    return 0; 
 }
