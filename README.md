@@ -1,10 +1,10 @@
 ![Gigathon Icon](https://i.imgur.com/1mSIKP4.png)
 
 This README was written in two languages:
-- **English** [Memory Game](#memory-game-english)
--  **Polski** [Gra w Memory](#gra-w-memory-polski)
+- **English** [Memory-Game](#memory-game-english)
+-  **Polski** [Gra-w-Memory](#gra-w-memory-polski)
 
-# Memory Game (English)
+# Memory-Game (English)
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -134,7 +134,7 @@ Input:
 
 ---
 
-# Gra w Memory (Polski)
+# Gra-w-Memory (Polski)
 
 ## Spis treści
 1. [Opis projektu](#opis-projektu)
