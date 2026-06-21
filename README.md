@@ -1,8 +1,8 @@
 ![Gigathon Icon](https://i.imgur.com/1mSIKP4.png)
 
 This README was written in two languages:
-- **English** [Memory-Game](#memory-game-english)
--  **Polski** [Gra-w-Memory](#gra-w-memory-polski)
+- **English** [Memory-Game](#memory-game-english).
+-  **Polski** [Gra-w-Memory](#gra-w-memory-polski).
 
 # Memory-Game (English)
 
