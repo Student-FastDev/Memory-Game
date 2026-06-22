@@ -4,7 +4,7 @@ This README was written in two languages:
 - **English** [Memory Game](#memory-game-english).
 -  **Polski** [Gra w Memory](#gra-w-memory-polski).
 
-# Memory-Game (English)
+# Memory Game (English)
 
 ## Table of Contents
 1. [Project Overview](#project-overview).
